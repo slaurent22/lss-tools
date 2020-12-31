@@ -33,11 +33,12 @@ def getTimeIterMs(segment, minAttemptId=None, comparison='GameTime'):
 def getStats(segment, minAttemptId=None, comparison='GameTime'):
     times = list(getTimeIterMs(segment, minAttemptId, comparison))
     mean = int(statistics.mean(times))
+    median = int(statistics.median(times))
     variance = int(statistics.variance(times))
-    return mean, variance, getSegmentName(segment)
+    return mean, variance, getSegmentName(segment), median
 
 def varianceKey(stats):
-    _, variance, _ = stats
+    _, variance, _, _ = stats
     return variance
 
 def getVarianceSorted(segments, minAttemptId=None, comparison='GameTime'):

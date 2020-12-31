@@ -9,16 +9,16 @@ import splitsutil
 import timeutil
 
 def variance(args):
-    display_format = "{:<15}{:<15}{}"
+    display_format = "{:<15}{:<15}{:<15}{}"
     tree = ET.parse(args.splits_file)
     root = tree.getroot()
     segments = splitsutil.getSegmentsRoot(root)
     sortedByVariance = splitsutil.getVarianceSorted(segments, minAttemptId=args.minattemptid, comparison=args.comparison)
-    print(display_format.format("Mean Time", "Variance", "Split Name"))
-    for mean, variance, name in sortedByVariance:
-        mean_time = timeutil.fromMilliseconds(mean)
-        mean_display = timeutil.formatTimeTuple(mean_time)
-        display = display_format.format(mean_display, variance, name)
+    print(display_format.format("Mean Time", "Median Time", "Variance", "Split Name"))
+    for mean, variance, name, median in sortedByVariance:
+        mean_display = timeutil.formatTimeTuple(timeutil.fromMilliseconds(mean))
+        median_display = timeutil.formatTimeTuple(timeutil.fromMilliseconds(median))
+        display = display_format.format(mean_display, median_display, variance, name)
         print(display)
 
 def createParser():
