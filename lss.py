@@ -13,7 +13,7 @@ def variance(args):
     tree = ET.parse(args.splits_file)
     root = tree.getroot()
     segments = splitsutil.getSegmentsRoot(root)
-    sortedByVariance = splitsutil.getVarianceSorted(segments, minAttemptId=args.minattemptid)
+    sortedByVariance = splitsutil.getVarianceSorted(segments, minAttemptId=args.minattemptid, comparison=args.comparison)
     print(display_format.format("Mean Time", "Variance", "Split Name"))
     for mean, variance, name in sortedByVariance:
         mean_time = timeutil.fromMilliseconds(mean)

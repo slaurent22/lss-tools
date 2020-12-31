@@ -6,11 +6,21 @@ MS_PER_MINUTE = 60 * MS_PER_SECOND
 MS_PER_HOUR = 60 * MS_PER_MINUTE
 MICROSENDS_PER_MILLLISECOND = 1000
 
+STD_FORMAT_LENGTH = len('00:01:11.1150000')
+NO_PRECISION_FORMAT_LENGTH = len('00:01:18')
+
 def qrem(a, b):
     return a // b, a % b
 
 def parseTime(timeText):
-    parsed = datetime.strptime(timeText[0:len(timeText)-2], "%H:%M:%S.%f")
+    # TODO: This is a super hack. Figure out a cleaner way of accounting for both formats
+    toParse = timeText
+    formatString = "%H:%M:%S.%f"
+    if len(timeText) == STD_FORMAT_LENGTH:
+        toParse = timeText[0:len(timeText)-1]
+    elif len(timeText) == NO_PRECISION_FORMAT_LENGTH:
+        formatString = "%H:%M:%S"
+    parsed = datetime.strptime(toParse, formatString)
     return parsed.hour, parsed.minute, parsed.second, int(parsed.microsecond / MICROSENDS_PER_MILLLISECOND)
 
 def toMilliseconds(timeTuple):
