@@ -27,8 +27,8 @@ def toMilliseconds(timeTuple):
     hour, minute, second, millisecond = timeTuple
     return hour * MS_PER_HOUR + minute * MS_PER_MINUTE + second * MS_PER_SECOND + millisecond
 
-def fromMilliseconds(microseconds):
-    ms_left = microseconds
+def fromMilliseconds(ms):
+    ms_left = ms
     hour,   ms_left = qrem(ms_left, MS_PER_HOUR)
     minute, ms_left = qrem(ms_left, MS_PER_MINUTE)
     second, ms_left = qrem(ms_left, MS_PER_SECOND)
@@ -38,3 +38,6 @@ def formatTimeTuple(timeTuple):
     hour, minute, second, millisecond = timeTuple
     # datetime.strftime("%H:%M:%S.%f")
     return "{:02d}:{:02d}:{:02d}.{:03d}".format(hour, minute, second, millisecond)
+
+def formatFromMilliseconds(ms):
+    return formatTimeTuple(fromMilliseconds(ms))

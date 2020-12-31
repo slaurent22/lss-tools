@@ -34,13 +34,14 @@ def getStats(segment, minAttemptId=None, comparison='GameTime'):
     times = list(getTimeIterMs(segment, minAttemptId, comparison))
     mean = int(statistics.mean(times))
     median = int(statistics.median(times))
-    variance = int(statistics.variance(times))
-    return mean, variance, getSegmentName(segment), median
+    deviation = int(statistics.stdev(times))
+    gold = timeutil.toMilliseconds(getGoldTime(segment))
+    return mean, deviation, getSegmentName(segment), median, gold
 
-def varianceKey(stats):
-    _, variance, _, _ = stats
-    return variance
+def deviationKey(stats):
+    _, deviation, _, _, _ = stats
+    return deviation
 
-def getVarianceSorted(segments, minAttemptId=None, comparison='GameTime'):
+def getDeviationSorted(segments, minAttemptId=None, comparison='GameTime'):
     stats = map(lambda x: getStats(x, minAttemptId, comparison), segments)
-    return sorted(stats, reverse=True, key=varianceKey)
+    return sorted(stats, reverse=True, key=deviationKey)
