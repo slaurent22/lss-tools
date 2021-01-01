@@ -35,6 +35,7 @@ def getStats(segment, minAttemptId=None, comparison='GameTime'):
     mean = int(statistics.mean(times))
     median = int(statistics.median(times))
     deviation = int(statistics.stdev(times))
+    mean, median, deviation = removeOutliers(times, mean, deviation)
     gold = timeutil.toMilliseconds(getGoldTime(segment))
     return mean, deviation, getSegmentName(segment), median, gold
 
@@ -45,3 +46,14 @@ def deviationKey(stats):
 def getDeviationSorted(segments, minAttemptId=None, comparison='GameTime'):
     stats = map(lambda x: getStats(x, minAttemptId, comparison), segments)
     return sorted(stats, reverse=True, key=deviationKey)
+
+def removeOutliers(times, mean, deviation): #Calc Z Score and remove if outlier
+    n = 0
+    while n in range(len(times)):
+        if ((times[n] - mean)/deviation > 3): #Equation for Z Score
+            times.pop(n)
+        else:
+            n += 1
+
+    return (int(statistics.mean(times)), int(statistics.median(times)), int(statistics.stdev(times)))
+
