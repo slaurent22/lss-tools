@@ -9,17 +9,18 @@ import splitsutil
 import timeutil
 
 def deviation(args):
-    display_format = "{:<15}{:<15}{:<15}{}"
+    display_format = "{:<15}{:<15}{:<15}{:<15}{}"
     tree = ET.parse(args.splits_file)
     root = tree.getroot()
     segments = splitsutil.getSegmentsRoot(root)
     sortedByDeviation = splitsutil.getDeviationSorted(segments, minAttemptId=args.minattemptid, comparison=args.comparison)
-    print(display_format.format("Mean", "Median", "Deviation", "Split Name"))
+    print(display_format.format("Mean", "Median", "Deviation", "Gold", "Split Name"))
     for mean, deviation, name, median, gold in sortedByDeviation:
         mean_display = timeutil.formatFromMilliseconds(mean)
         deviation_display = timeutil.formatFromMilliseconds(deviation)
         median_display = timeutil.formatFromMilliseconds(median)
-        display = display_format.format(mean_display, median_display, deviation_display, name)
+        gold_display = timeutil.formatFromMilliseconds(gold)
+        display = display_format.format(mean_display, median_display, deviation_display, gold_display, name)
         print(display)
 
 def createParser():
