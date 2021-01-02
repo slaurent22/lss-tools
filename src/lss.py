@@ -5,25 +5,10 @@ import argparse
 import xml.etree.ElementTree as ET
 
 # local
+from deviation import deviation
 from splits import Splits
-import timeutil
 
 DEFAULT_COMPARISON = 'GameTime'
-
-
-def deviation(splits, args):
-    display_format = "{:<15}{:<15}{:<15}{:<15}{}"
-    deviations = splits.get_deviations(min_attempt_id=args.minattemptid,
-                                       comparison=args.comparison,
-                                       zscore_cutoff=args.zscore_cutoff)
-    print(display_format.format("Mean", "Median", "Deviation", "Gold", "Split Name"))
-    for mean, deviation, name, median, gold in deviations:
-        mean_display = timeutil.format_from_milliseconds(mean)
-        deviation_display = timeutil.format_from_milliseconds(deviation)
-        median_display = timeutil.format_from_milliseconds(median)
-        gold_display = timeutil.format_from_milliseconds(gold)
-        display = display_format.format(mean_display, median_display, deviation_display, gold_display, name)
-        print(display)
 
 
 def positive_int(value):

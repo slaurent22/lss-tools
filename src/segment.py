@@ -43,7 +43,7 @@ class Segment:
         time_tuple = timeutil.parse_time(gold_string)
         return timeutil.to_milliseconds(time_tuple)
 
-    def get_stats(self, min_attempt_id=None, comparison='GameTime', zscore_cutoff=None):
+    def get_summary(self, min_attempt_id=None, comparison='GameTime', zscore_cutoff=None):
         times = list(get_time_iter_ms(self.__xml_root__,
                                       comparison=comparison, min_attempt_id=min_attempt_id))
         mean = int(statistics.mean(times))
@@ -51,4 +51,14 @@ class Segment:
         deviation = int(statistics.stdev(times))
         if type(zscore_cutoff) is int:
             mean, median, deviation = remove_outliers(times, mean, deviation, zscore_cutoff=zscore_cutoff)
-        return mean, deviation, self.name, median, self.get_gold_time(comparison=comparison)
+        stats = dict([
+            ('mean', mean),
+            ('median', median),
+            ('deviation', deviation)
+        ])
+
+        return dict([
+            ('name', self.name),
+            ('gold', self.get_gold_time(comparison=comparison)),
+            ('stats', stats)
+        ])
