@@ -8,10 +8,15 @@ import xml.etree.ElementTree as ET
 from splits import Splits
 import timeutil
 
+DEFAULT_COMPARISON = 'GameTime'
+DEFAULT_ZSCORE_CUTOFF = 3
+
 
 def deviation(splits, args):
     display_format = "{:<15}{:<15}{:<15}{:<15}{}"
-    deviations = splits.get_deviations(min_attempt_id=args.minattemptid, comparison=args.comparison)
+    deviations = splits.get_deviations(min_attempt_id=args.minattemptid,
+                                       comparison=args.comparison,
+                                       zscore_cutoff=args.zscore_cutoff)
     print(display_format.format("Mean", "Median", "Deviation", "Gold", "Split Name"))
     for mean, deviation, name, median, gold in deviations:
         mean_display = timeutil.format_from_milliseconds(mean)
@@ -22,16 +27,34 @@ def deviation(splits, args):
         print(display)
 
 
+def positive_int(value):
+    ivalue = int(value)
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError('{} is an invalid positive int value'.format(value))
+    return ivalue
+
+
 def create_parser():
     parser = argparse.ArgumentParser(description='Analyze .lss Splits Files')
     subparsers = parser.add_subparsers()
     parser_deviation = subparsers.add_parser('deviation')
     parser_deviation.set_defaults(func=deviation)
-    parser_deviation.add_argument('splits_file', type=str, help='The .lss splits file to analyze')
-    parser_deviation.add_argument('--comparison', type=str, help='Time comparison to analyze. Defaults to GameTime',
-                                  default='GameTime', choices=['GameTime', 'RealTime'])
-    parser_deviation.add_argument('--minattemptid', type=int,
+    parser_deviation.add_argument('splits_file',
+                                  type=str,
+                                  help='The .lss splits file to analyze')
+    parser_deviation.add_argument('--comparison',
+                                  type=str,
+                                  help='Time comparison to analyze. Defaults: {}'.format(DEFAULT_COMPARISON),
+                                  default=DEFAULT_COMPARISON,
+                                  choices=['GameTime', 'RealTime'])
+    parser_deviation.add_argument('--minattemptid',
+                                  type=int,
                                   help='Minimum attempt id to analyze. Drops data from attempts below this id.')
+    parser_deviation.add_argument('--zscore-cutoff',
+                                  type=positive_int,
+                                  help='Z-Score outside of which to drop outliers. Default: {}'.format(
+                                      DEFAULT_ZSCORE_CUTOFF),
+                                  default=DEFAULT_ZSCORE_CUTOFF)
     return parser
 
 

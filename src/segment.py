@@ -20,10 +20,11 @@ def get_time_iter_ms(segment_xml_root, min_attempt_id=None, comparison='GameTime
     return map(timeutil.to_milliseconds, parsed_times)
 
 
-def remove_outliers(times, mean, deviation):  # Calc Z Score and remove if outlier
+def remove_outliers(times, mean, deviation, zscore_cutoff=3):  # Calc Z Score and remove if outlier
+    print(zscore_cutoff)
     n = 0
     while n in range(len(times)):
-        if ((times[n] - mean) / deviation > 3):  # Equation for Z Score
+        if ((times[n] - mean) / deviation > zscore_cutoff):  # Equation for Z Score
             times.pop(n)
         else:
             n += 1
@@ -43,11 +44,12 @@ class Segment:
         time_tuple = timeutil.parse_time(gold_string)
         return timeutil.to_milliseconds(time_tuple)
 
-    def get_stats(self, min_attempt_id=None, comparison='GameTime'):
+    def get_stats(self, min_attempt_id=None, comparison='GameTime', zscore_cutoff=None):
         times = list(get_time_iter_ms(self.__xml_root__,
                                       comparison=comparison, min_attempt_id=min_attempt_id))
         mean = int(statistics.mean(times))
         median = int(statistics.median(times))
         deviation = int(statistics.stdev(times))
-        mean, median, deviation = remove_outliers(times, mean, deviation)
+        if type(zscore_cutoff) is int:
+            mean, median, deviation = remove_outliers(times, mean, deviation, zscore_cutoff=zscore_cutoff)
         return mean, deviation, self.name, median, self.get_gold_time(comparison=comparison)
