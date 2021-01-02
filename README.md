@@ -5,6 +5,27 @@ Tools to parse and analyze LiveSplit `.lss` files. At the moment it supports onl
 ## deviation
 Calculates [standard deviation](https://en.wikipedia.org/wiki/Standard_deviation) on each segment history to figure out which splits are the least consistent. You can specify lower bound on the attempt id, so that you can not account for very old segment times.
 
+```
+$ ./src/lss.py deviation --help
+usage: lss.py deviation [-h] [--comparison {GameTime,RealTime}]
+                        [--minattemptid MINATTEMPTID]
+                        [--zscore-cutoff ZSCORE_CUTOFF]
+                        splits_file
+
+positional arguments:
+  splits_file           The .lss splits file to analyze
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --comparison {GameTime,RealTime}
+                        Time comparison to analyze. Default: GameTime
+  --minattemptid MINATTEMPTID
+                        Minimum attempt id to analyze. Drops data from
+                        attempts below this id.
+  --zscore-cutoff ZSCORE_CUTOFF
+                        Z-Score outside of which to drop outliers.
+```
+
 ### deviation example
 In [example-splits/4ms.lss](./example-splits/4ms.lss), we find that attempt 171 is the beginning of a recent set of attempts:
 ```xml
@@ -29,7 +50,6 @@ Mean           Median         Deviation      Gold           Split Name
 00:00:35.071   00:00:34.858   00:00:00.614   00:00:33.533   Grub 1
 00:00:21.781   00:00:21.635   00:00:00.610   00:00:19.863   Shard 4
 00:00:10.054   00:00:09.914   00:00:00.455   00:00:09.449   Shard 1
-
 ```
 
 This tells us that, when we do segment practice, we should focus on `Aspid Arena`*, `Grub 1`, and `Mawlek`.

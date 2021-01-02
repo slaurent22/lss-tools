@@ -9,7 +9,6 @@ from splits import Splits
 import timeutil
 
 DEFAULT_COMPARISON = 'GameTime'
-DEFAULT_ZSCORE_CUTOFF = 3
 
 
 def deviation(splits, args):
@@ -44,7 +43,7 @@ def create_parser():
                                   help='The .lss splits file to analyze')
     parser_deviation.add_argument('--comparison',
                                   type=str,
-                                  help='Time comparison to analyze. Defaults: {}'.format(DEFAULT_COMPARISON),
+                                  help='Time comparison to analyze. Default: {}'.format(DEFAULT_COMPARISON),
                                   default=DEFAULT_COMPARISON,
                                   choices=['GameTime', 'RealTime'])
     parser_deviation.add_argument('--minattemptid',
@@ -52,9 +51,7 @@ def create_parser():
                                   help='Minimum attempt id to analyze. Drops data from attempts below this id.')
     parser_deviation.add_argument('--zscore-cutoff',
                                   type=positive_int,
-                                  help='Z-Score outside of which to drop outliers. Default: {}'.format(
-                                      DEFAULT_ZSCORE_CUTOFF),
-                                  default=DEFAULT_ZSCORE_CUTOFF)
+                                  help='Z-Score outside of which to drop outliers.')
     return parser
 
 
