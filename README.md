@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/slaurent22/lss-tools.svg?branch=main)](https://travis-ci.org/slaurent22/lss-tools)
+
 # lss tools
 
 Tools to parse and analyze LiveSplit `.lss` files. At the moment it supports only command, `deviation`
