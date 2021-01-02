@@ -1,66 +1,17 @@
-# lib
-import statistics
-
 # local
-import timeutil
+from segment import Segment
 
 
-def getSegmentsRoot(root):
+def get_segments_xml_root(root):
     return root.find('Segments')
 
 
-def getSegmentName(segment):
-    return segment.find('Name').text
-
-
-def getAttemptId(time):
-    return int(time.attrib['id'])
-
-
-def getGoldTime(segment, comparison='GameTime'):
-    searchKey = 'BestSegmentTime/{}'.format(comparison)
-    goldString = segment.find(searchKey).text
-    timeTuple = timeutil.parseTime(goldString)
-    return timeTuple
-
-
-def getTimeIterMs(segment, minAttemptId=None, comparison='GameTime'):
-    times = segment.findall('SegmentHistory/Time')
-    if (type(minAttemptId) is int):
-        times = filter(lambda x: getAttemptId(x) > minAttemptId, times)
-    gameTimesRaw = map(lambda x: x.find(comparison), times)
-    gameTimeElements = filter(lambda x: x is not None, gameTimesRaw)
-    gameTimesText = map(lambda x: x.text, gameTimeElements)
-    parsedTimes = map(timeutil.parseTime, gameTimesText)
-    return map(timeutil.toMilliseconds, parsedTimes)
-
-
-def getStats(segment, minAttemptId=None, comparison='GameTime'):
-    times = list(getTimeIterMs(segment, minAttemptId, comparison))
-    mean = int(statistics.mean(times))
-    median = int(statistics.median(times))
-    deviation = int(statistics.stdev(times))
-    mean, median, deviation = removeOutliers(times, mean, deviation)
-    gold = timeutil.toMilliseconds(getGoldTime(segment))
-    return mean, deviation, getSegmentName(segment), median, gold
-
-
-def deviationKey(stats):
+def deviation_key(stats):
     _, deviation, _, _, _ = stats
     return deviation
 
 
-def getDeviationSorted(segments, minAttemptId=None, comparison='GameTime'):
-    stats = map(lambda x: getStats(x, minAttemptId, comparison), segments)
-    return sorted(stats, reverse=True, key=deviationKey)
-
-
-def removeOutliers(times, mean, deviation):  # Calc Z Score and remove if outlier
-    n = 0
-    while n in range(len(times)):
-        if ((times[n] - mean) / deviation > 3):  # Equation for Z Score
-            times.pop(n)
-        else:
-            n += 1
-
-    return (int(statistics.mean(times)), int(statistics.median(times)), int(statistics.stdev(times)))
+def get_deviations(segments_xml_root, minAttemptId=None, comparison='GameTime'):
+    segments = map(lambda xml_root: Segment(xml_root, comparison), segments_xml_root)
+    stats = map(lambda x: x.get_stats(min_attempt_id=minAttemptId), segments)
+    return sorted(stats, reverse=True, key=deviation_key)

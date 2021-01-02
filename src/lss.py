@@ -9,24 +9,22 @@ import splitsutil
 import timeutil
 
 
-def deviation(args):
+def deviation(args, segments):
     display_format = "{:<15}{:<15}{:<15}{:<15}{}"
-    tree = ET.parse(args.splits_file)
-    root = tree.getroot()
-    segments = splitsutil.getSegmentsRoot(root)
-    sortedByDeviation = splitsutil.getDeviationSorted(
+
+    deviations = splitsutil.get_deviations(
         segments, minAttemptId=args.minattemptid, comparison=args.comparison)
     print(display_format.format("Mean", "Median", "Deviation", "Gold", "Split Name"))
-    for mean, deviation, name, median, gold in sortedByDeviation:
-        mean_display = timeutil.formatFromMilliseconds(mean)
-        deviation_display = timeutil.formatFromMilliseconds(deviation)
-        median_display = timeutil.formatFromMilliseconds(median)
-        gold_display = timeutil.formatFromMilliseconds(gold)
+    for mean, deviation, name, median, gold in deviations:
+        mean_display = timeutil.format_from_milliseconds(mean)
+        deviation_display = timeutil.format_from_milliseconds(deviation)
+        median_display = timeutil.format_from_milliseconds(median)
+        gold_display = timeutil.format_from_milliseconds(gold)
         display = display_format.format(mean_display, median_display, deviation_display, gold_display, name)
         print(display)
 
 
-def createParser():
+def create_parser():
     parser = argparse.ArgumentParser(description='Analyze .lss Splits Files')
     subparsers = parser.add_subparsers()
     parser_deviation = subparsers.add_parser('deviation')
@@ -40,9 +38,13 @@ def createParser():
 
 
 def main():
-    parser = createParser()
+    parser = create_parser()
     args = parser.parse_args()
-    args.func(args)
+
+    tree = ET.parse(args.splits_file)
+    root = tree.getroot()
+    segments = splitsutil.get_segments_xml_root(root)
+    args.func(args, segments)
 
 
 if __name__ == "__main__":

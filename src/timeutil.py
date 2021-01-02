@@ -9,40 +9,39 @@ STD_FORMAT_LENGTH = len('00:01:11.1150000')
 NO_PRECISION_FORMAT_LENGTH = len('00:01:18')
 
 
-def qrem(a, b):
+def __qrem__(a, b):
     return a // b, a % b
 
 
-def parseTime(timeText):
+def parse_time(time_text):
     # TODO: This is a super hack. Figure out a cleaner way of accounting for both formats
-    toParse = timeText
-    formatString = "%H:%M:%S.%f"
-    if len(timeText) == STD_FORMAT_LENGTH:
-        toParse = timeText[0:len(timeText) - 1]
-    elif len(timeText) == NO_PRECISION_FORMAT_LENGTH:
-        formatString = "%H:%M:%S"
-    parsed = datetime.strptime(toParse, formatString)
+    to_parse = time_text
+    format_string = "%H:%M:%S.%f"
+    if len(time_text) == STD_FORMAT_LENGTH:
+        to_parse = time_text[0:len(time_text) - 1]
+    elif len(time_text) == NO_PRECISION_FORMAT_LENGTH:
+        format_string = "%H:%M:%S"
+    parsed = datetime.strptime(to_parse, format_string)
     return parsed.hour, parsed.minute, parsed.second, int(parsed.microsecond / MICROSENDS_PER_MILLLISECOND)
 
 
-def toMilliseconds(timeTuple):
-    hour, minute, second, millisecond = timeTuple
+def to_milliseconds(time_tuple):
+    hour, minute, second, millisecond = time_tuple
     return hour * MS_PER_HOUR + minute * MS_PER_MINUTE + second * MS_PER_SECOND + millisecond
 
 
-def fromMilliseconds(ms):
+def from_milliseconds(ms):
     ms_left = ms
-    hour, ms_left = qrem(ms_left, MS_PER_HOUR)
-    minute, ms_left = qrem(ms_left, MS_PER_MINUTE)
-    second, ms_left = qrem(ms_left, MS_PER_SECOND)
+    hour, ms_left = __qrem__(ms_left, MS_PER_HOUR)
+    minute, ms_left = __qrem__(ms_left, MS_PER_MINUTE)
+    second, ms_left = __qrem__(ms_left, MS_PER_SECOND)
     return hour, minute, second, ms_left
 
 
-def formatTimeTuple(timeTuple):
-    hour, minute, second, millisecond = timeTuple
-    # datetime.strftime("%H:%M:%S.%f")
+def format_time_tuple(time_tuple):
+    hour, minute, second, millisecond = time_tuple
     return "{:02d}:{:02d}:{:02d}.{:03d}".format(hour, minute, second, millisecond)
 
 
-def formatFromMilliseconds(ms):
-    return formatTimeTuple(fromMilliseconds(ms))
+def format_from_milliseconds(ms):
+    return format_time_tuple(from_milliseconds(ms))
