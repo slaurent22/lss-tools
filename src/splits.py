@@ -2,16 +2,17 @@
 from segment import Segment
 
 
-def get_segments_xml_root(root):
-    return root.find('Segments')
-
-
 def deviation_key(stats):
     _, deviation, _, _, _ = stats
     return deviation
 
 
-def get_deviations(segments_xml_root, minAttemptId=None, comparison='GameTime'):
-    segments = map(lambda xml_root: Segment(xml_root, comparison), segments_xml_root)
-    stats = map(lambda x: x.get_stats(min_attempt_id=minAttemptId), segments)
-    return sorted(stats, reverse=True, key=deviation_key)
+class Splits:
+
+    def __init__(self, splits_xml_root):
+        self.__segments_xml_root__ = splits_xml_root.find('Segments')
+
+    def get_deviations(self, min_attempt_id=None, comparison='GameTime'):
+        segments = map(lambda segment_xml_root: Segment(segment_xml_root, comparison), self.__segments_xml_root__)
+        stats = map(lambda segment: segment.get_stats(min_attempt_id=min_attempt_id), segments)
+        return sorted(stats, reverse=True, key=deviation_key)

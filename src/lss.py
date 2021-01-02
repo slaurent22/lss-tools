@@ -5,14 +5,13 @@ import argparse
 import xml.etree.ElementTree as ET
 
 # local
-import splits
+from splits import Splits
 import timeutil
 
 
-def deviation(args, segments):
+def deviation(splits, args):
     display_format = "{:<15}{:<15}{:<15}{:<15}{}"
-    deviations = splits.get_deviations(
-        segments, minAttemptId=args.minattemptid, comparison=args.comparison)
+    deviations = splits.get_deviations(min_attempt_id=args.minattemptid, comparison=args.comparison)
     print(display_format.format("Mean", "Median", "Deviation", "Gold", "Split Name"))
     for mean, deviation, name, median, gold in deviations:
         mean_display = timeutil.format_from_milliseconds(mean)
@@ -41,10 +40,9 @@ def main():
     args = parser.parse_args()
 
     tree = ET.parse(args.splits_file)
-    root = tree.getroot()
-    segments = splits.get_segments_xml_root(root)
-
-    args.func(args, segments)
+    splits_xml_root = tree.getroot()
+    splits = Splits(splits_xml_root)
+    args.func(splits, args)
 
 
 if __name__ == "__main__":
