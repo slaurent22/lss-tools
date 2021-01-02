@@ -1,0 +1,4 @@
+[flake8]
+ignore =
+    E261, # at least two spaces before inline comment
+max-line-length = 120
