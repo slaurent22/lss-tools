@@ -1,5 +1,4 @@
 from datetime import datetime
-import math
 
 MS_PER_SECOND = 1000
 MS_PER_MINUTE = 60 * MS_PER_SECOND

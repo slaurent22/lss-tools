@@ -1,5 +1,4 @@
 # lib
-import math
 import statistics
 
 # local
