@@ -8,7 +8,13 @@ import xml.etree.ElementTree as ET
 from splits import Splits
 import timeutil
 
-DEFAULT_COMPARISON = 'GameTime'
+
+
+
+
+
+
+DEFAULT_COMPARISON = 'GameTime
 
 
 def deviation(splits, args):
