@@ -20,10 +20,15 @@ def get_time_iter_ms(segment_xml_root, min_attempt_id=None, comparison='GameTime
     return map(timeutil.to_milliseconds, parsed_times)
 
 
+def z_score(value, mean, deviation):
+    return (value - mean) / deviation
+
+
 def remove_outliers(times, mean, deviation, zscore_cutoff=None):  # Calc Z Score and remove if outlier
     n = 0
     while n in range(len(times)):
-        if ((times[n] - mean) / deviation > zscore_cutoff):  # Equation for Z Score
+        absolute_z_score = abs(z_score(times[n], mean, deviation))
+        if (absolute_z_score > zscore_cutoff):
             times.pop(n)
         else:
             n += 1
