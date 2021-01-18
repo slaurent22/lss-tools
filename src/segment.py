@@ -24,7 +24,7 @@ def z_score(value, mean, deviation):
     return (value - mean) / deviation
 
 
-def remove_outliers(times, mean, deviation, zscore_cutoff=None):  # Calc Z Score and remove if outlier
+def remove_outliers(times, mean, deviation, zscore_cutoff=0):  # Calc Z Score and remove if outlier
     n = 0
     while n in range(len(times)):
         absolute_z_score = abs(z_score(times[n], mean, deviation))
@@ -62,8 +62,11 @@ class Segment:
             ('deviation', deviation)
         ])
 
+        gold = self.get_gold_time(comparison=comparison)
+        gold_zscore = round(z_score(gold, mean, deviation), 2)
         return dict([
             ('name', self.name),
-            ('gold', self.get_gold_time(comparison=comparison)),
+            ('gold', gold),
+            ('gold_zscore', gold_zscore),
             ('stats', stats)
         ])
