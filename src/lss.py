@@ -18,9 +18,7 @@ def positive_int(value):
     return ivalue
 
 
-def create_parser():
-    parser = argparse.ArgumentParser(description='Analyze .lss Splits Files')
-    subparsers = parser.add_subparsers()
+def add_parser_deviation(subparsers):
     parser_deviation = subparsers.add_parser('deviation')
     parser_deviation.set_defaults(func=deviation)
     parser_deviation.add_argument('splits_file',
@@ -37,6 +35,14 @@ def create_parser():
     parser_deviation.add_argument('--zscore-cutoff',
                                   type=positive_int,
                                   help='Z-Score outside of which to drop outliers.')
+    return parser_deviation
+
+
+def create_parser():
+    parser = argparse.ArgumentParser(description='Analyze .lss Splits Files')
+    subparsers = parser.add_subparsers(dest='command')
+    subparsers.required = True
+    add_parser_deviation(subparsers)
     return parser
 
 
