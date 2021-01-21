@@ -42,8 +42,8 @@ class Segment:
     def get_gold_time(self, comparison='GameTime'):
         search_key = 'BestSegmentTime/{}'.format(comparison)
         gold_string = self.__xml_root__.find(search_key).text
-        time_tuple = timeutil.parse_time(gold_string)
-        return timeutil.to_milliseconds(time_tuple)
+        time_tuple = parse_time(gold_string)
+        return to_milliseconds(time_tuple)
 
     def get_summary(self, min_attempt_id=None, comparison='GameTime', zscore_cutoff=None):
         times = list(get_time_iter_ms(self.__xml_root__,
