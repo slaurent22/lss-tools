@@ -1,5 +1,4 @@
-# local
-from segment import Segment
+from .segment import Segment
 
 
 class Splits:

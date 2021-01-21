@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 
-# lib
 import argparse
+from lss import deviation
+from lss import merge
+from lss.splits import Splits
 import xml.etree.ElementTree as ET
-
-# local
-from deviation import deviation
-from merge import merge
-from splits import Splits
 
 DEFAULT_COMPARISON = 'GameTime'
 

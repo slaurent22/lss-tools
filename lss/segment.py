@@ -1,8 +1,5 @@
-# lib
 import statistics
-
-# local
-import timeutil
+from .timeutil import parse_time, to_milliseconds
 
 
 def get_attempt_id(time_xml_node):
@@ -16,8 +13,8 @@ def get_time_iter_ms(segment_xml_root, min_attempt_id=None, comparison='GameTime
     game_times_raw = map(lambda x: x.find(comparison), times)
     game_time_elements = filter(lambda x: x is not None, game_times_raw)
     game_times_text = map(lambda x: x.text, game_time_elements)
-    parsed_times = map(timeutil.parse_time, game_times_text)
-    return map(timeutil.to_milliseconds, parsed_times)
+    parsed_times = map(parse_time, game_times_text)
+    return map(to_milliseconds, parsed_times)
 
 
 def z_score(value, mean, deviation):

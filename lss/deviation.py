@@ -1,5 +1,5 @@
 # local
-import timeutil
+from . import timeutil
 
 
 def __deviation_key__(segment_summary):
