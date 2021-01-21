@@ -22,8 +22,8 @@ def _combined_time_sort_key_(combined_entry: Tuple[int, CombinedTimeEntry]):
 
 
 def display_combined_time_dict(combined_dict: CombinedTimeDict, time_a_label: str, time_b_label: str):
-    format_str = '{:<9}{:<20}{:<20}{:<15}'
-    print(format_str.format('Time id', time_a_label, time_b_label, 'Sum'))
+    format_str = '{:<15}{:<20}{:<20}{:<15}'
+    print(format_str.format('Attempt id', time_a_label, time_b_label, 'Sum'))
     combined_dict_items_sorted = sorted(combined_dict.items(), key=_combined_time_sort_key_)
     for entry in combined_dict_items_sorted:
         time_id, times = entry
@@ -64,6 +64,7 @@ def merge(splits: Splits, args: Namespace):
     (merge_segment_index, merge_segment) = merge_segment_match[0]
     next_segment = segments[merge_segment_index + 1]
     print('Merging into "{}"'.format(next_segment.name))
+    print('Sorting by merged Golds. The top time is the proper combined gold, from a single run')
     print()
 
     merge_segment_time_dict: Dict[int, TimeTuple] = merge_segment.get_game_time_dict()
