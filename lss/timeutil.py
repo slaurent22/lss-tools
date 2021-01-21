@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple
+from typing import Optional, Tuple
 
 MS_PER_SECOND = 1000
 MS_PER_MINUTE = 60 * MS_PER_SECOND
@@ -29,7 +29,9 @@ def parse_time(time_text: str) -> TimeTuple:
     return parsed.hour, parsed.minute, parsed.second, int(parsed.microsecond / MICROSENDS_PER_MILLLISECOND)
 
 
-def to_milliseconds(time_tuple: TimeTuple) -> int:
+def to_milliseconds(time_tuple: Optional[TimeTuple]) -> int:
+    if (time_tuple is None):
+        return 0
     hour, minute, second, millisecond = time_tuple
     return hour * MS_PER_HOUR + minute * MS_PER_MINUTE + second * MS_PER_SECOND + millisecond
 
@@ -42,7 +44,9 @@ def from_milliseconds(ms: int) -> TimeTuple:
     return hour, minute, second, ms_left
 
 
-def format_time_tuple(time_tuple: TimeTuple) -> str:
+def format_time_tuple(time_tuple: Optional[TimeTuple]) -> str:
+    if time_tuple is None:
+        return "None"
     hour, minute, second, millisecond = time_tuple
     return "{:02d}:{:02d}:{:02d}.{:03d}".format(hour, minute, second, millisecond)
 

@@ -1,7 +1,7 @@
-from typing import Any, Iterable, List, Tuple, TypedDict
+from typing import Any, Dict, Iterable, List, Tuple, TypedDict
 import statistics
 from xml.etree.ElementTree import Element as XMLElement
-from .timeutil import parse_time, to_milliseconds
+from .timeutil import parse_time, to_milliseconds, TimeTuple
 
 
 def exists(it):
@@ -69,6 +69,24 @@ class Segment:
         game_time_elements_raw = map(lambda x: x.find(comparison), times)
         game_time_elements_not_none: Any = filter(exists, game_time_elements_raw)
         return game_time_elements_not_none
+
+    def get_game_time_dict(self, min_attempt_id=None, comparison='GameTime') -> Dict[int, TimeTuple]:
+        time_dict: Dict[int, TimeTuple] = {}
+        times: List[XMLElement] = list(filter(exists, self.__xml_root__.findall('SegmentHistory/Time')))
+        if (type(min_attempt_id) is int):
+            times = list(filter(lambda x: get_attempt_id(x) > min_attempt_id, times))
+
+        for time_xml_node in times:
+            attempt_id = get_attempt_id(time_xml_node)
+            time = time_xml_node.find(comparison)
+            if (not exists(time)):
+                continue
+            assert time is not None
+            time_text = time.text
+            assert time_text is not None
+            time_tuple = parse_time(time_text)
+            time_dict[attempt_id] = time_tuple
+        return time_dict
 
     def get_time_iter_ms(self, min_attempt_id=None, comparison='GameTime') -> Iterable[int]:
         # the Any types annotation is here because I can't figure out how to turn Iterable[Optional[XMLElement]]
