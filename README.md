@@ -8,7 +8,7 @@ Tools to parse and analyze LiveSplit `.lss` files. At the moment it supports onl
 Calculates [standard deviation](https://en.wikipedia.org/wiki/Standard_deviation) on each segment history to figure out which splits are the least consistent. You can specify lower bound on the attempt id, so that you can not account for very old segment times.
 
 ```
-$ ./src/lss.py deviation --help
+$ ./main.py deviation --help
 usage: lss.py deviation [-h] [--comparison {GameTime,RealTime}]
                         [--minattemptid MINATTEMPTID]
                         [--zscore-cutoff ZSCORE_CUTOFF]
@@ -38,7 +38,7 @@ In [example-splits/4ms.lss](./example-splits/4ms.lss), we find that attempt 171 
 So, we are interested in how inconsistent we have been since then:
 ```bash
 # keep outliers:
-$ ./src/lss.py deviation ./example-splits/4ms.lss --minattemptid 171 | head -n 4
+$ ./main.py deviation ./example-splits/4ms.lss --minattemptid 171 | head -n 4
 Mean           Median         Deviation      Gold           Gold Z-Score   Split Name
 00:00:29.240   00:00:26.357   00:00:06.687   00:00:25.320   -0.59          Aspid Arena
 00:00:36.560   00:00:34.905   00:00:05.799   00:00:33.533   -0.52          Grub 1
@@ -46,7 +46,7 @@ Mean           Median         Deviation      Gold           Gold Z-Score   Split
 
 
 # remove outliers:
-$ ./src/lss.py deviation ./example-splits/4ms.lss --minattemptid 171 --zscore-cutoff 3
+$ ./main.py deviation ./example-splits/4ms.lss --minattemptid 171 --zscore-cutoff 3
 Mean           Median         Deviation      Gold           Gold Z-Score   Split Name
 00:00:29.240   00:00:26.357   00:00:06.687   00:00:25.320   -0.59          Aspid Arena
 00:01:20.848   00:01:23.652   00:00:05.703   00:01:13.138   -1.35          Mawlek
@@ -79,7 +79,7 @@ We will use `--minattemptid 38` to remove 3 months of rust:
 
 Finding outlier golds:
 ```bash
-$ ./src/lss.py deviation ./example-splits/allskills.lss --minattemptid 38 --zscore-cutoff 3
+$ ./main.py deviation ./example-splits/allskills.lss --minattemptid 38 --zscore-cutoff 3
 Mean           Median         Deviation      Gold           Gold Z-Score   Split Name
 # ...
 00:02:22.272   00:02:22.084   00:00:06.771   00:01:59.263   -3.4  !!!      Great Slash
