@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
-from lss import deviation
-from lss import merge
+from lss.deviation import deviation
+from lss.merge import merge
 from lss.splits import Splits
 import xml.etree.ElementTree as ET
 
