@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 
 # local
 from deviation import deviation
+from merge import merge
 from splits import Splits
 
 DEFAULT_COMPARISON = 'GameTime'
@@ -38,11 +39,23 @@ def add_parser_deviation(subparsers):
     return parser_deviation
 
 
+def add_parser_merge(subparsers):
+    parser_deviation = subparsers.add_parser('merge')
+    parser_deviation.set_defaults(func=merge)
+    parser_deviation.add_argument('splits_file',
+                                  type=str,
+                                  help='The .lss splits file to analyze')
+    parser_deviation.add_argument('merge_point',
+                                  type=str,
+                                  help='The the name of the split to remove')
+
+
 def create_parser():
     parser = argparse.ArgumentParser(description='Analyze .lss Splits Files')
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
     add_parser_deviation(subparsers)
+    add_parser_merge(subparsers)
     return parser
 
 
