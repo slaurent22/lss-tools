@@ -12,19 +12,6 @@ def get_attempt_id(time_xml_node: XMLElement) -> int:
     return int(time_xml_node.attrib['id'])
 
 
-def get_time_iter_ms(segment_xml_root: XMLElement, min_attempt_id=None, comparison='GameTime') -> Iterable[int]:
-    times: List[XMLElement] = segment_xml_root.findall('SegmentHistory/Time')
-    if (type(min_attempt_id) is int):
-        times = list(filter(lambda x: get_attempt_id(x) > min_attempt_id, times))
-    # the Any types annotations are here because I can't figure out how to turn Iterable[Optional[XMLElement]]
-    # into Iterable[XMLElement] to make the mypy type checker happy
-    game_times_raw: Any = map(lambda x: x.find(comparison), times)
-    game_time_elements: Any = filter(exists, game_times_raw)
-    game_times_text: Iterable[str] = map(lambda x: x.text, game_time_elements)
-    parsed_times = map(parse_time, game_times_text)
-    return map(to_milliseconds, parsed_times)
-
-
 def z_score(value: int, mean: int, deviation: int) -> float:
     return (value - mean) / deviation
 
@@ -74,9 +61,25 @@ class Segment:
         time_tuple = parse_time(gold_string)
         return to_milliseconds(time_tuple)
 
+    def get_game_time_elements(self, min_attempt_id=None, comparison='GameTime') -> Iterable[XMLElement]:
+        times: List[XMLElement] = self.__xml_root__.findall('SegmentHistory/Time')
+        if (type(min_attempt_id) is int):
+            times = list(filter(lambda x: get_attempt_id(x) > min_attempt_id, times))
+
+        game_time_elements_raw = map(lambda x: x.find(comparison), times)
+        game_time_elements_not_none: Any = filter(exists, game_time_elements_raw)
+        return game_time_elements_not_none
+
+    def get_time_iter_ms(self, min_attempt_id=None, comparison='GameTime') -> Iterable[int]:
+        # the Any types annotation is here because I can't figure out how to turn Iterable[Optional[XMLElement]]
+        # into Iterable[XMLElement] to make the mypy type checker happy
+        game_time_elements: Any = self.get_game_time_elements(min_attempt_id, comparison)
+        game_times_text: Iterable[str] = map(lambda x: x.text, game_time_elements)
+        parsed_times = map(parse_time, game_times_text)
+        return map(to_milliseconds, parsed_times)
+
     def get_summary(self, min_attempt_id=None, comparison='GameTime', zscore_cutoff=None) -> SegmentSummary:
-        times = list(get_time_iter_ms(self.__xml_root__,
-                                      comparison=comparison, min_attempt_id=min_attempt_id))
+        times = list(self.get_time_iter_ms(comparison=comparison, min_attempt_id=min_attempt_id))
         mean = int(statistics.mean(times))
         median = int(statistics.median(times))
         deviation = int(statistics.stdev(times))
