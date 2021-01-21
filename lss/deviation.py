@@ -1,5 +1,6 @@
-# local
+from argparse import Namespace
 from . import timeutil
+from .splits import Splits
 
 
 def __deviation_key__(segment_summary):
@@ -13,7 +14,7 @@ def zscore_display_with_warning(gold_zscore, zscore_cutoff=None):
     return "{:<5}".format(str(gold_zscore))
 
 
-def deviation(splits, args):
+def deviation(splits: Splits, args: Namespace):
     display_format = "{:<15}{:<15}{:<15}{:<15}{:<15}{}"
     summaries = splits.get_segment_summaries(min_attempt_id=args.minattemptid,
                                              comparison=args.comparison,

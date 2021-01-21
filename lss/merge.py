@@ -1,4 +1,8 @@
-def merge(splits, args):
+from argparse import Namespace
+from .splits import Splits
+
+
+def merge(splits: Splits, args: Namespace):
     print('Merging on "{}"'.format(args.merge_point))
     segments = list(splits.segments)
     merge_segment_match = [(index, seg) for (index, seg) in enumerate(segments) if seg.name == args.merge_point]
