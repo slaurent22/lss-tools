@@ -28,6 +28,8 @@ def display_combined_time_dict(combined_dict: CombinedTimeDict, time_a_label: st
     for entry in combined_dict_items_sorted:
         time_id, times = entry
         time_a, time_b, time_sum = times
+        if time_a == 0 or time_b == 0:
+            continue
         display = format_str.format(time_id,
                                     format_from_milliseconds(time_a),
                                     format_from_milliseconds(time_b),
