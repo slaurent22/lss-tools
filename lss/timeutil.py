@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional, Tuple
 
 MS_PER_SECOND = 1000
 MS_PER_MINUTE = 60 * MS_PER_SECOND
@@ -8,12 +9,15 @@ MICROSENDS_PER_MILLLISECOND = 1000
 STD_FORMAT_LENGTH = len('00:01:11.1150000')
 NO_PRECISION_FORMAT_LENGTH = len('00:01:18')
 
+# hour, minute, second, milliseconds
+TimeTuple = Tuple[int, int, int, int]
 
-def __qrem__(a, b):
+
+def __qrem__(a: int, b: int) -> Tuple[int, int]:
     return a // b, a % b
 
 
-def parse_time(time_text):
+def parse_time(time_text: str) -> TimeTuple:
     # TODO: This is a super hack. Figure out a cleaner way of accounting for both formats
     to_parse = time_text
     format_string = "%H:%M:%S.%f"
@@ -25,12 +29,14 @@ def parse_time(time_text):
     return parsed.hour, parsed.minute, parsed.second, int(parsed.microsecond / MICROSENDS_PER_MILLLISECOND)
 
 
-def to_milliseconds(time_tuple):
+def to_milliseconds(time_tuple: Optional[TimeTuple]) -> int:
+    if (time_tuple is None):
+        return 0
     hour, minute, second, millisecond = time_tuple
     return hour * MS_PER_HOUR + minute * MS_PER_MINUTE + second * MS_PER_SECOND + millisecond
 
 
-def from_milliseconds(ms):
+def from_milliseconds(ms: int) -> TimeTuple:
     ms_left = ms
     hour, ms_left = __qrem__(ms_left, MS_PER_HOUR)
     minute, ms_left = __qrem__(ms_left, MS_PER_MINUTE)
@@ -38,10 +44,12 @@ def from_milliseconds(ms):
     return hour, minute, second, ms_left
 
 
-def format_time_tuple(time_tuple):
+def format_time_tuple(time_tuple: Optional[TimeTuple]) -> str:
+    if time_tuple is None:
+        return "None"
     hour, minute, second, millisecond = time_tuple
     return "{:02d}:{:02d}:{:02d}.{:03d}".format(hour, minute, second, millisecond)
 
 
-def format_from_milliseconds(ms):
+def format_from_milliseconds(ms: int) -> str:
     return format_time_tuple(from_milliseconds(ms))

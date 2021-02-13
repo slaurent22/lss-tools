@@ -1,7 +1,11 @@
 language: python
+python:
+  - "3.9"
 
 install:
   - pip install flake8
+  - pip install mypy
 
 script:
   - flake8
+  - mypy lss
