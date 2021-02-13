@@ -37,6 +37,9 @@ def create_parser():
     parser_deviation.add_argument('--zscore-cutoff',
                                   type=positive_int,
                                   help='Z-Score outside of which to drop outliers.')
+    parser_deviation.add_argument('--last-runs',
+                                  type=positive_int,
+                                  help='Look at stats from the N most recent runs.')
     return parser
 
 
