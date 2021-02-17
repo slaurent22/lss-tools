@@ -44,13 +44,14 @@ class SegmentSummary(TypedDict):
 class Segment:
     name: str
 
-    def __init__(self, xml_root: XMLElement):
+    def __init__(self, xml_root: XMLElement, attempts: str):
         name_root = xml_root.find('Name')
         assert name_root is not None
         name_text = name_root.text
         assert name_text is not None
         self.name = name_text
         self.__xml_root__ = xml_root
+        self.attempts = attempts
 
     def get_gold_time(self, comparison='GameTime') -> int:
         search_key = 'BestSegmentTime/{}'.format(comparison)
@@ -88,16 +89,19 @@ class Segment:
             time_dict[attempt_id] = time_tuple
         return time_dict
 
-    def get_time_iter_ms(self, min_attempt_id=None, comparison='GameTime') -> Iterable[int]:
+    def get_time_iter_ms(self, min_attempt_id=None, last_runs=None, comparison='GameTime') -> Iterable[int]:
         # the Any types annotation is here because I can't figure out how to turn Iterable[Optional[XMLElement]]
         # into Iterable[XMLElement] to make the mypy type checker happy
+        if(last_runs is not None and last_runs != int(self.attempts)):
+            min_attempt_id = int(self.attempts) - last_runs
+        
         game_time_elements: Any = self.get_game_time_elements(min_attempt_id, comparison)
         game_times_text: Iterable[str] = map(lambda x: x.text, game_time_elements)
         parsed_times = map(parse_time, game_times_text)
         return map(to_milliseconds, parsed_times)
 
-    def get_summary(self, min_attempt_id=None, comparison='GameTime', zscore_cutoff=None) -> SegmentSummary:
-        times = list(self.get_time_iter_ms(comparison=comparison, min_attempt_id=min_attempt_id))
+    def get_summary(self, min_attempt_id=None, comparison='GameTime', zscore_cutoff=None, last_runs=None) -> SegmentSummary:
+        times = list(self.get_time_iter_ms(comparison=comparison, min_attempt_id=min_attempt_id, last_runs=last_runs))
         mean = int(statistics.mean(times))
         median = int(statistics.median(times))
         deviation = int(statistics.stdev(times))

@@ -28,11 +28,14 @@ def add_parser_deviation(subparsers):
                                   default=DEFAULT_COMPARISON,
                                   choices=['GameTime', 'RealTime'])
     parser_deviation.add_argument('--minattemptid',
-                                  type=int,
+                                  type=positive_int,
                                   help='Minimum attempt id to analyze. Drops data from attempts below this id.')
     parser_deviation.add_argument('--zscore-cutoff',
                                   type=positive_int,
                                   help='Z-Score outside of which to drop outliers.')
+    parser_deviation.add_argument('--last-runs',
+                                  type=positive_int,
+                                  help='Analyzes the most recent X runs. Drops all data before these runs')
     
     return parser_deviation
 
