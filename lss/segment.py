@@ -3,7 +3,6 @@ import statistics
 from xml.etree.ElementTree import Element as XMLElement
 from .timeutil import parse_time, to_milliseconds, TimeTuple
 
-
 def exists(it):
     return (it is not None)
 
@@ -44,7 +43,7 @@ class SegmentSummary(TypedDict):
 class Segment:
     name: str
 
-    def __init__(self, xml_root: XMLElement, attempts: str):
+    def __init__(self, xml_root: XMLElement, attempts: int, last_attempt: int):
         name_root = xml_root.find('Name')
         assert name_root is not None
         name_text = name_root.text
@@ -52,6 +51,7 @@ class Segment:
         self.name = name_text
         self.__xml_root__ = xml_root
         self.attempts = attempts
+        self.last_attempt = last_attempt
 
     def get_gold_time(self, comparison='GameTime') -> int:
         search_key = 'BestSegmentTime/{}'.format(comparison)
@@ -92,8 +92,11 @@ class Segment:
     def get_time_iter_ms(self, min_attempt_id=None, last_runs=None, comparison='GameTime') -> Iterable[int]:
         # the Any types annotation is here because I can't figure out how to turn Iterable[Optional[XMLElement]]
         # into Iterable[XMLElement] to make the mypy type checker happy
-        if(last_runs is not None and last_runs != int(self.attempts)):
-            min_attempt_id = int(self.attempts) - last_runs
+        if(last_runs is not None):
+            min_attempt_id = int(self.last_attempt) - last_runs
+        elif(min_attempt_id is not None):  #adjusts min_attempt_id in case ls counter is not accurate
+            temp = int(self.attempts) - min_attempt_id
+            min_attempt_id = int(self.last_attempt) - temp
         
         game_time_elements: Any = self.get_game_time_elements(min_attempt_id, comparison)
         game_times_text: Iterable[str] = map(lambda x: x.text, game_time_elements)
