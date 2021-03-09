@@ -124,3 +124,4 @@ class Segment:
             'gold_zscore': gold_zscore,
             'stats': stats
         }
+    
