@@ -33,6 +33,10 @@ def add_parser_deviation(subparsers):
     parser_deviation.add_argument('--zscore-cutoff',
                                   type=positive_int,
                                   help='Z-Score outside of which to drop outliers.')
+    parser_deviation.add_argument('--last-runs',
+                                  type=positive_int,
+                                  help='Analyzes the most recent X runs. Drops all data before these runs')
+    
     return parser_deviation
 
 
