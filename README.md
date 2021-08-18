@@ -4,7 +4,7 @@
 
 Tools to parse and analyze LiveSplit `.lss` files. At the moment it supports only command, `deviation`
 
-Contributions welcome! See the [contributing guide])(./CONTRIBUTING.md) for guidelines.
+Contributions welcome! See the [contributing guide](./CONTRIBUTING.md) for guidelines.
 
 ## deviation
 Calculates [standard deviation](https://en.wikipedia.org/wiki/Standard_deviation) on each segment history to figure out which splits are the least consistent. You can specify lower bound on the attempt id, so that you can not account for very old segment times.
