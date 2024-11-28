@@ -18,7 +18,8 @@ def deviation(splits: Splits, args: Namespace):
     display_format = "{:<15}{:<15}{:<15}{:<15}{:<15}{}"
     summaries = splits.get_segment_summaries(min_attempt_id=args.minattemptid,
                                              comparison=args.comparison,
-                                             zscore_cutoff=args.zscore_cutoff)
+                                             zscore_cutoff=args.zscore_cutoff,
+                                             last_runs=args.last_runs)
 
     summaries_by_deviation = sorted(summaries, reverse=True, key=__deviation_key__)
     print(display_format.format("Mean", "Median", "Deviation", "Gold", "Gold Z-Score", "Split Name"))
